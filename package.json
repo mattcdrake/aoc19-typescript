@@ -1,0 +1,17 @@
+{
+  "name": "aoc19-typescript",
+  "version": "0.0.1",
+  "description": "Advent of Code 2019 solutions implemented in TypeScript",
+  "main": "app.js",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "typescript": "^3.9.7"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node ./build/app.js"
+  },
+  "author": "Matt Drake",
+  "license": "ISC"
+}
