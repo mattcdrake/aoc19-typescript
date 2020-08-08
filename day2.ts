@@ -2,10 +2,24 @@ import { IntcodeComputer } from "./intcode";
 
 const part1 = function (): number {
   const computer = new IntcodeComputer("./input/day2.txt");
-  computer.setData(1, 12);
-  computer.setData(2, 2);
+  computer.setInput(12, 2);
   computer.run();
-  return computer.getData(0);
+  return computer.getProgramOutput();
 };
 
-export { part1 };
+const part2 = function (): number {
+  const computer = new IntcodeComputer("./input/day2.txt");
+  for (let i = 0; i < 100; ++i) {
+    for (let j = 0; j < 100; ++j) {
+      computer.resetComputer();
+      computer.setInput(i, j);
+      computer.run();
+      if (computer.getProgramOutput() === 19690720) {
+        return 100 * i + j;
+      }
+    }
+  }
+  return -1;
+};
+
+export { part1, part2 };
