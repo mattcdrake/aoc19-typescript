@@ -5,6 +5,8 @@
     "outDir": "./build",
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
   }
 }

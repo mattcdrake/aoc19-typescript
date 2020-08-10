@@ -1,4 +1,4 @@
-const fs = require("fs");
+import * as fs from "fs";
 
 class IntcodeComputer {
   originalData: number[];
@@ -6,7 +6,7 @@ class IntcodeComputer {
   ip: number;
 
   constructor(datapath: string) {
-    const rawData = fs.readFileSync(datapath, "UTF-8");
+    const rawData = fs.readFileSync(datapath, "utf-8");
     this.originalData = rawData.split(/,/).map((x: string) => Number(x));
     this.copyOriginalDataToWorkingData();
     this.ip = 0;
