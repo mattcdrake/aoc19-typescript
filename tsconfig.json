@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "module": "CommonJS",
     "noImplicitAny": true,
     "outDir": "./build",
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node"]
+    "allowSyntheticDefaultImports": true
   }
 }
