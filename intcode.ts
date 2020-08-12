@@ -21,6 +21,7 @@ interface instructionComponents {
 
 class IntcodeComputer {
   originalData: number[];
+  changedIP: boolean;
   data: number[];
   hasInput: boolean;
   input: number;
@@ -29,6 +30,7 @@ class IntcodeComputer {
 
   constructor(datapath: string) {
     const rawData = fs.readFileSync(datapath, "utf-8");
+    this.changedIP = false;
     this.originalData = rawData.split(/,/).map((x: string) => Number(x));
     this.copyOriginalDataToWorkingData();
     this.hasInput = false;
@@ -41,11 +43,21 @@ class IntcodeComputer {
     switch (opcode) {
       case 1:
       case 2:
+      case 7:
+      case 8:
         this.ip += 4;
         break;
       case 3:
       case 4:
         this.ip += 2;
+        break;
+      case 5:
+      case 6:
+        if (this.changedIP) {
+          this.changedIP = false;
+        } else {
+          this.ip += 3;
+        }
         break;
     }
   }
@@ -99,6 +111,28 @@ class IntcodeComputer {
     this.output.push(pos1);
   }
 
+  opcode5(pos1: number, pos2: number): void {
+    if (pos1 !== 0) {
+      this.ip = pos2;
+      this.changedIP = true;
+    }
+  }
+
+  opcode6(pos1: number, pos2: number): void {
+    if (pos1 === 0) {
+      this.ip = pos2;
+      this.changedIP = true;
+    }
+  }
+
+  opcode7(pos1: number, pos2: number, pos3: number): void {
+    this.data[pos3] = pos1 < pos2 ? 1 : 0;
+  }
+
+  opcode8(pos1: number, pos2: number, pos3: number): void {
+    this.data[pos3] = pos1 === pos2 ? 1 : 0;
+  }
+
   parseModes(
     input: number
   ): [instructionMode, instructionMode, instructionMode] {
@@ -138,6 +172,8 @@ class IntcodeComputer {
     switch (output.opcode) {
       case 1:
       case 2:
+      case 7:
+      case 8:
         output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
         output.pos2 = this.parseParameter(this.data[this.ip + 2], modes[1]);
         output.pos3 = this.data[this.ip + 3];
@@ -147,6 +183,11 @@ class IntcodeComputer {
         break;
       case 4:
         output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
+        break;
+      case 5:
+      case 6:
+        output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
+        output.pos2 = this.parseParameter(this.data[this.ip + 2], modes[1]);
         break;
     }
 
@@ -194,6 +235,18 @@ class IntcodeComputer {
       case 4:
         this.opcode4(pos1);
         haltMsg = haltMessage.SendOuput;
+        break;
+      case 5:
+        this.opcode5(pos1, pos2);
+        break;
+      case 6:
+        this.opcode6(pos1, pos2);
+        break;
+      case 7:
+        this.opcode7(pos1, pos2, pos3);
+        break;
+      case 8:
+        this.opcode8(pos1, pos2, pos3);
         break;
       case 99:
         return haltMessage.Done;

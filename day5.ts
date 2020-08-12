@@ -17,7 +17,16 @@ function part1(): number {
 }
 
 function part2(): number {
-  return -1;
+  const computer = new IntcodeComputer("./input/day5.txt");
+
+  let haltMsg: haltMessage;
+  do {
+    haltMsg = computer.run();
+    if (haltMsg === haltMessage.NeedInput) {
+      computer.giveInput(5);
+    }
+  } while (haltMsg !== haltMessage.Done);
+  return computer.getLastOutput();
 }
 
 export { part1, part2 };
