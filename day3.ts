@@ -1,15 +1,5 @@
 import * as fs from "fs";
 
-let wirePathsRaw = fs.readFileSync("./input/day3.txt", "utf-8");
-let wirePaths = wirePathsRaw.split(/\n/);
-wirePaths.pop();
-const firstCoordinates = getWireCoordinates(wirePaths[0]);
-const secondCoordinates = getWireCoordinates(wirePaths[1]);
-let mutualPoints: point[] = findMatchingPoints(
-  firstCoordinates,
-  secondCoordinates
-);
-
 interface wirePath {
   [x: number]: {
     [y: number]: number;
@@ -20,6 +10,15 @@ interface point {
   x: number;
   y: number;
 }
+
+const wirePathsRaw = fs.readFileSync("./input/day3.txt", "utf-8");
+const wirePaths = wirePathsRaw.split(/\n/);
+const firstCoordinates = getWireCoordinates(wirePaths[0]);
+const secondCoordinates = getWireCoordinates(wirePaths[1]);
+const mutualPoints: point[] = findMatchingPoints(
+  firstCoordinates,
+  secondCoordinates
+);
 
 function getWireCoordinates(path: string): wirePath {
   let coords: wirePath = {};
