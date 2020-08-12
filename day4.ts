@@ -22,6 +22,31 @@ function hasSameDigitAdjacent(num: number): boolean {
   return false;
 }
 
+function hasOnlyTwoSameDigitsAdjacent(num: number): boolean {
+  let rightmostDigit = num % 10;
+  num = Math.floor(num / 10);
+  let nextDigit = num % 10;
+  let validMatch = false;
+  let lastPairMatched = false;
+
+  while (num > 0) {
+    if (rightmostDigit !== nextDigit && validMatch) {
+      return true;
+    } else if (rightmostDigit !== nextDigit) {
+      lastPairMatched = false;
+    } else if (rightmostDigit === nextDigit && lastPairMatched) {
+      validMatch = false;
+    } else {
+      validMatch = true;
+      lastPairMatched = true;
+    }
+    rightmostDigit = nextDigit;
+    num = Math.floor(num / 10);
+    nextDigit = num % 10;
+  }
+  return validMatch;
+}
+
 function neverDecreases(num: number): boolean {
   let rightmostDigit = num % 10;
   num = Math.floor(num / 10);
@@ -49,7 +74,18 @@ function part1(): number {
 }
 
 function part2(): number {
-  return -1;
+  let candidates = 0;
+  for (let i = rangeLowerBound; i <= rangeUpperBound; ++i) {
+    if (
+      hasSixDigits(i) &&
+      hasSameDigitAdjacent(i) &&
+      hasOnlyTwoSameDigitsAdjacent(i) &&
+      neverDecreases(i)
+    ) {
+      candidates++;
+    }
+  }
+  return candidates;
 }
 
-export {part1, part2};
+export { part1, part2 };
