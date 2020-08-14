@@ -3,6 +3,7 @@ import { part1 as d2p1, part2 as d2p2 } from "./day2";
 import { part1 as d3p1, part2 as d3p2 } from "./day3";
 import { part1 as d4p1, part2 as d4p2 } from "./day4";
 import { part1 as d5p1, part2 as d5p2 } from "./day5";
+import { part1 as d6p1, part2 as d6p2 } from "./day6";
 
 console.log("Day 1, Part 1: " + d1p1());
 console.log("Day 1, Part 2: " + d1p2());
@@ -14,3 +15,5 @@ console.log("Day 4, Part 1: " + d4p1());
 console.log("Day 4, Part 2: " + d4p2());
 console.log("Day 5, Part 1: " + d5p1());
 console.log("Day 5, Part 2: " + d5p2());
+console.log("Day 6, Part 1: " + d6p1());
+console.log("Day 6, Part 2: " + d6p2());
