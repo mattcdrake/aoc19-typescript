@@ -98,3 +98,10 @@ describe("Testing day 7, part 1", () => {
     expect(result).to.equal(70597);
   });
 });
+
+describe("Testing day 7, part 2", () => {
+  it("should equal 30872528", () => {
+    const result = d7p2();
+    expect(result).to.equal(30872528);
+  });
+});

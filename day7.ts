@@ -1,4 +1,4 @@
-import { IntcodeComputer } from "./intcode";
+import { haltMessage, IntcodeComputer } from "./intcode";
 
 function permute(permutation: number[]): number[][] {
   let length = permutation.length,
@@ -50,7 +50,42 @@ function part1(): number {
 }
 
 function part2(): number {
-  return -1;
+  let maxThrust = 0;
+  let perms = permute([5, 6, 7, 8, 9]);
+  for (let perm of perms) {
+    let amps = new Array<IntcodeComputer>(5);
+    for (let i = 0; i < amps.length; ++i) {
+      amps[i] = new IntcodeComputer("./input/day7.txt");
+    }
+
+    let firstLoop = true;
+    let outputSignal = 0;
+    let thrusterSignal = 0;
+    let currentAmp = 0;
+    let haltMsg = haltMessage.NotDone;
+
+    while (haltMsg !== haltMessage.Done) {
+      amps[currentAmp].run();
+      if (firstLoop) {
+        amps[currentAmp].giveInput(perm[currentAmp]);
+        if (currentAmp === 4) {
+          firstLoop = false;
+        }
+        amps[currentAmp].run();
+      }
+      amps[currentAmp].giveInput(outputSignal);
+      haltMsg = amps[currentAmp].run();
+      outputSignal = amps[currentAmp].getLastOutput();
+      if (currentAmp === 4) {
+        thrusterSignal = outputSignal;
+      }
+      currentAmp = (currentAmp + 1) % 5;
+    }
+    if (thrusterSignal > maxThrust) {
+      maxThrust = thrusterSignal;
+    }
+  }
+  return maxThrust;
 }
 
 export { part1, part2 };
