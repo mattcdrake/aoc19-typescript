@@ -26,7 +26,7 @@ class IntcodeComputer {
   hasInput: boolean;
   input: number;
   ip: number;
-  output: number[];
+  output: number;
 
   constructor(datapath: string) {
     const rawData = fs.readFileSync(datapath, "utf-8");
@@ -36,7 +36,7 @@ class IntcodeComputer {
     this.hasInput = false;
     this.input = 0;
     this.ip = 0;
-    this.output = [];
+    this.output = 0;
   }
 
   advanceIP(opcode: number): void {
@@ -73,12 +73,8 @@ class IntcodeComputer {
     return this.getData(0);
   }
 
-  getAllOutput(): number[] {
-    return this.output;
-  }
-
   getLastOutput(): number {
-    return this.output[this.output.length - 1];
+    return this.output;
   }
 
   // This is different from the "setInput" function required by day 2.
@@ -108,7 +104,7 @@ class IntcodeComputer {
   }
 
   opcode4(pos1: number): void {
-    this.output.push(pos1);
+    this.output = pos1;
   }
 
   opcode5(pos1: number, pos2: number): void {
