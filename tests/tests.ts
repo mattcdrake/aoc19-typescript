@@ -83,3 +83,10 @@ describe("Testing day 6, part 1", () => {
     expect(result).to.equal(158090);
   });
 });
+
+describe("Testing day 6, part 2", () => {
+  it("should equal 241", () => {
+    const result = d6p2();
+    expect(result).to.equal(241);
+  });
+});

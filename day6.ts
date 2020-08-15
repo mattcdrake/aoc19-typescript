@@ -1,7 +1,12 @@
 import * as fs from "fs";
 
+let pairs: OrbitPair[] = readPairs("./input/day6.txt");
+let COM: BodyNode = { name: "COM", orbiting: null, orbiters: [] };
+buildLinksRec(COM, pairs);
+
 interface BodyNode {
   name: string;
+  orbiting: BodyNode;
   orbiters: BodyNode[];
 }
 
@@ -23,15 +28,42 @@ function readPairs(path: string): OrbitPair[] {
   return orbitPairs;
 }
 
+function findNode(root: BodyNode, targetName: string): BodyNode {
+  if (root.name === targetName) {
+    return root;
+  }
+  for (let orbiter of root.orbiters) {
+    let searchResult = findNode(orbiter, targetName);
+    if (searchResult) {
+      return searchResult;
+    }
+  }
+  return null;
+}
+
 // This also deletes the pair from `pairs`.
 function addOrbitersToNode(orbitee: BodyNode, pairs: OrbitPair[]): void {
   for (let i = 0; i < pairs.length; ++i) {
     if (pairs[i].orbitee === orbitee.name) {
-      orbitee.orbiters.push({ name: pairs[i].orbiter, orbiters: [] });
+      orbitee.orbiters.push({
+        name: pairs[i].orbiter,
+        orbiting: orbitee,
+        orbiters: [],
+      });
       pairs.splice(i, 1);
       i--;
     }
   }
+}
+
+function buildPathToCOM(source: BodyNode): BodyNode[] {
+  let path: BodyNode[] = [];
+  source = source.orbiting;
+  while (source.name !== "COM") {
+    path.push(source);
+    source = source.orbiting;
+  }
+  return path;
 }
 
 function buildLinksRec(orbitee: BodyNode, pairs: OrbitPair[]): void {
@@ -49,15 +81,28 @@ function countOrbitsRec(source: BodyNode, depth: number): number {
   return orbits;
 }
 
+function findStepsToCommonNode(node1: BodyNode[], node2: BodyNode[]): number {
+  for (let i = 0; i < node1.length; ++i) {
+    let curnode = node1[i];
+    for (let j = 0; j < node2.length; ++j) {
+      if (curnode.name === node2[j].name) {
+        return i + j;
+      }
+    }
+  }
+  return -1;
+}
+
 function part1(): number {
-  let pairs: OrbitPair[] = readPairs("./input/day6.txt");
-  let COM: BodyNode = { name: "COM", orbiters: [] };
-  buildLinksRec(COM, pairs);
   return countOrbitsRec(COM, 0);
 }
 
 function part2(): number {
-  return -1;
+  let you = findNode(COM, "YOU");
+  let santa = findNode(COM, "SAN");
+  let youPath = buildPathToCOM(you);
+  let santaPath = buildPathToCOM(santa);
+  return findStepsToCommonNode(youPath, santaPath);
 }
 
 export { part1, part2 };
