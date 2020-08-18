@@ -113,3 +113,16 @@ describe("Testing day 8, part 1", () => {
     expect(result).to.equal(2125);
   });
 });
+
+describe("Testing day 8, part 2", () => {
+  it('should equal the right "image"', () => {
+    const correctResult = `XX  X XXX     X XX X    X
+XXX X XXX XXX X XX X XXXX
+XXX XX X XXX XX    X   XX
+XXX XXX XXX XXX XX X XXXX
+ XX XXX XX XXXX XX X XXXX
+X  XXXX XX    X XX X XXXX\n`;
+    const result = d8p2();
+    expect(result).to.equal(correctResult);
+  });
+});

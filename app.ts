@@ -22,4 +22,4 @@ console.log("Day 6, Part 2: " + d6p2());
 console.log("Day 7, Part 1: " + d7p1());
 console.log("Day 7, Part 2: " + d7p2());
 console.log("Day 8, Part 1: " + d8p1());
-console.log("Day 8, Part 2: " + d8p2());
+console.log("Day 8, Part 2: \n" + d8p2());

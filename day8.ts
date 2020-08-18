@@ -1,7 +1,13 @@
 import * as fs from "fs";
 
+enum PixelColor {
+  Black,
+  White,
+  Transparent,
+}
+
 class Layer {
-  pixels: number[][];
+  pixels: PixelColor[][];
   width: number;
   height: number;
 
@@ -12,21 +18,26 @@ class Layer {
     for (let i = 0; i < height; ++i) {
       this.pixels.push([]);
       for (let j = 0; j < width; ++j) {
-        this.pixels[i].push(Number(data[i * width + j]));
+        let pixel: PixelColor = Number(data[i * width + j]);
+        this.pixels[i].push(pixel);
       }
     }
   }
 
-  countNumInLayer(num: number): number {
+  countColorInLayer(color: PixelColor): number {
     let count = 0;
     for (let i = 0; i < this.pixels.length; ++i) {
       for (let j = 0; j < this.pixels[i].length; ++j) {
-        if (this.pixels[i][j] === num) {
+        if (this.pixels[i][j] === color) {
           count++;
         }
       }
     }
     return count;
+  }
+
+  getPixel(x: number, y: number): PixelColor {
+    return this.pixels[y][x];
   }
 }
 
@@ -48,11 +59,11 @@ class Image {
     }
   }
 
-  layerWithMinNum(num: number): Layer {
+  layerWithMinColor(color: PixelColor): Layer {
     let minNum = Infinity;
     let minNumIndex = -1;
     this.layers.forEach((value, index) => {
-      let numsInLayer = value.countNumInLayer(0);
+      let numsInLayer = value.countColorInLayer(color);
       if (numsInLayer < minNum) {
         minNum = numsInLayer;
         minNumIndex = index;
@@ -60,17 +71,49 @@ class Image {
     });
     return this.layers[minNumIndex];
   }
+
+  getPixel(x: number, y: number): PixelColor {
+    let pixel;
+    for (let layer of this.layers) {
+      pixel = layer.getPixel(x, y);
+      if (pixel !== PixelColor.Transparent) {
+        return pixel;
+      }
+    }
+    return pixel;
+  }
 }
+
+let pixelInput = fs.readFileSync("./input/day8.txt", "utf8");
+let image = new Image(25, 6, pixelInput);
 
 function part1(): number {
-  let pixelInput = fs.readFileSync("./input/day8.txt", "utf8");
-  let image = new Image(25, 6, pixelInput);
-  let layer = image.layerWithMinNum(0);
-  return layer.countNumInLayer(1) * layer.countNumInLayer(2);
+  let layer = image.layerWithMinColor(PixelColor.Black);
+  return (
+    layer.countColorInLayer(PixelColor.White) *
+    layer.countColorInLayer(PixelColor.Transparent)
+  );
 }
 
-function part2(): number {
-  return -1;
+function part2(): string {
+  let output: string = "";
+  for (let i = 0; i < image.height; ++i) {
+    for (let j = 0; j < image.width; ++j) {
+      let pixel = image.getPixel(j, i);
+      let char;
+      switch (pixel) {
+        case PixelColor.Black:
+          char = "X";
+          break;
+        default:
+          char = " ";
+          break;
+      }
+      output += char;
+    }
+    output += "\n";
+  }
+  return output;
 }
 
 export { part1, part2 };
