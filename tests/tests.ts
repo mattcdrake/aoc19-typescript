@@ -6,6 +6,7 @@ import { part1 as d5p1, part2 as d5p2 } from "../day5";
 import { part1 as d6p1, part2 as d6p2 } from "../day6";
 import { part1 as d7p1, part2 as d7p2 } from "../day7";
 import { part1 as d8p1, part2 as d8p2 } from "../day8";
+import { part1 as d9p1, part2 as d9p2 } from "../day9";
 import { expect } from "chai";
 import "mocha";
 
@@ -124,5 +125,12 @@ XXX XXX XXX XXX XX X XXXX
 X  XXXX XX    X XX X XXXX\n`;
     const result = d8p2();
     expect(result).to.equal(correctResult);
+  });
+});
+
+describe("Testing day 9, part 1", () => {
+  it("should equal 2399197539", () => {
+    const result = d9p1();
+    expect(result).to.equal(2399197539);
   });
 });

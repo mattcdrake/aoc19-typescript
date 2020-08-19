@@ -3,6 +3,7 @@ import * as fs from "fs";
 enum instructionMode {
   Position = 0,
   Immediate = 1,
+  Relative = 2,
 }
 
 enum haltMessage {
@@ -20,13 +21,14 @@ interface instructionComponents {
 }
 
 class IntcodeComputer {
-  originalData: number[];
   changedIP: boolean;
   data: number[];
   hasInput: boolean;
   input: number;
   ip: number;
+  originalData: number[];
   output: number;
+  relativeBase: number;
 
   constructor(datapath: string) {
     const rawData = fs.readFileSync(datapath, "utf-8");
@@ -37,6 +39,7 @@ class IntcodeComputer {
     this.input = 0;
     this.ip = 0;
     this.output = 0;
+    this.relativeBase = 0;
   }
 
   advanceIP(opcode: number): void {
@@ -49,6 +52,7 @@ class IntcodeComputer {
         break;
       case 3:
       case 4:
+      case 9:
         this.ip += 2;
         break;
       case 5:
@@ -129,8 +133,12 @@ class IntcodeComputer {
     this.data[pos3] = pos1 === pos2 ? 1 : 0;
   }
 
+  opcode9(pos1: number): void {
+    this.relativeBase += pos1;
+  }
+
   parseModes(
-    input: number
+    input: number,
   ): [instructionMode, instructionMode, instructionMode] {
     let output: [instructionMode, instructionMode, instructionMode] = [
       instructionMode.Position,
@@ -148,11 +156,13 @@ class IntcodeComputer {
         case 1:
           output[parameter] = instructionMode.Immediate;
           break;
+        case 2:
+          output[parameter] = instructionMode.Relative;
+          break;
       }
       parameter++;
       input = Math.floor(input / 10);
     }
-
     return output;
   }
 
@@ -170,31 +180,70 @@ class IntcodeComputer {
       case 2:
       case 7:
       case 8:
-        output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
-        output.pos2 = this.parseParameter(this.data[this.ip + 2], modes[1]);
-        output.pos3 = this.data[this.ip + 3];
+        output.pos1 = this.parseParameter(
+          this.data[this.ip + 1],
+          modes[0],
+          false,
+        );
+        output.pos2 = this.parseParameter(
+          this.data[this.ip + 2],
+          modes[1],
+          false,
+        );
+        output.pos3 = this.parseParameter(
+          this.data[this.ip + 3],
+          modes[2],
+          true,
+        );
         break;
       case 3:
-        output.pos1 = this.data[this.ip + 1];
+        output.pos1 = this.parseParameter(
+          this.data[this.ip + 1],
+          modes[0],
+          true,
+        );
         break;
       case 4:
-        output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
+      case 9:
+        output.pos1 = this.parseParameter(
+          this.data[this.ip + 1],
+          modes[0],
+          false,
+        );
         break;
       case 5:
       case 6:
-        output.pos1 = this.parseParameter(this.data[this.ip + 1], modes[0]);
-        output.pos2 = this.parseParameter(this.data[this.ip + 2], modes[1]);
+        output.pos1 = this.parseParameter(
+          this.data[this.ip + 1],
+          modes[0],
+          false,
+        );
+        output.pos2 = this.parseParameter(
+          this.data[this.ip + 2],
+          modes[1],
+          false,
+        );
         break;
     }
-
     return output;
   }
 
-  parseParameter(value: number, mode: instructionMode): number {
+  // Positions that are written to have different behavior in position/relative mode.
+  parseParameter(
+    value: number,
+    mode: instructionMode,
+    writePosition: boolean,
+  ): number {
     if (mode === instructionMode.Immediate) {
       return value;
-    } else {
+    } else if (mode === instructionMode.Position && writePosition) {
+      return value;
+    } else if (mode === instructionMode.Position) {
       return this.data[value];
+    } else if (mode === instructionMode.Relative && writePosition) {
+      return value + this.relativeBase;
+    } else if (mode === instructionMode.Relative) {
+      return this.data[value + this.relativeBase];
     }
   }
 
@@ -243,6 +292,9 @@ class IntcodeComputer {
         break;
       case 8:
         this.opcode8(pos1, pos2, pos3);
+        break;
+      case 9:
+        this.opcode9(pos1);
         break;
       case 99:
         return haltMessage.Done;
