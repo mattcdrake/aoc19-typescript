@@ -134,3 +134,10 @@ describe("Testing day 9, part 1", () => {
     expect(result).to.equal(2399197539);
   });
 });
+
+describe("Testing day 9, part 2", () => {
+  it("should equal 35106", () => {
+    const result = d9p2();
+    expect(result).to.equal(35106);
+  });
+});

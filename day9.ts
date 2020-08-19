@@ -18,7 +18,15 @@ function part1(): number {
 }
 
 function part2(): number {
-  return -1;
+  let computer: IntcodeComputer = new IntcodeComputer("./input/day9.txt");
+  let haltMsg: haltMessage = null;
+  while (haltMsg !== haltMessage.Done) {
+    haltMsg = computer.run();
+    if (haltMsg === haltMessage.NeedInput) {
+      computer.giveInput(2);
+    }
+  }
+  return computer.getLastOutput();
 }
 
 export { part1, part2 };
