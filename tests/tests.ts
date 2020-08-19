@@ -7,6 +7,7 @@ import { part1 as d6p1, part2 as d6p2 } from "../day6";
 import { part1 as d7p1, part2 as d7p2 } from "../day7";
 import { part1 as d8p1, part2 as d8p2 } from "../day8";
 import { part1 as d9p1, part2 as d9p2 } from "../day9";
+import { part1 as d10p1, part2 as d10p2 } from "../day10";
 import { expect } from "chai";
 import "mocha";
 
@@ -139,5 +140,12 @@ describe("Testing day 9, part 2", () => {
   it("should equal 35106", () => {
     const result = d9p2();
     expect(result).to.equal(35106);
+  });
+});
+
+describe("Testing day 10, part 1", () => {
+  it("should equal 314", () => {
+    const result = d10p1();
+    expect(result).to.equal(314);
   });
 });
